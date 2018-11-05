@@ -12,18 +12,18 @@ int main(int argc, char *argv[]){
   struct stat fileStat;
   struct dirent *entry;
   DIR *dir;
-  
+
   dir = opendir(name);
 
   printf("Error: %s\n", strerror(errno));
 
   if(strcmp(strerror(errno), "Success") == 0){
-  
+
     printf("Statistics for directory:\n");
 
     stat("test", &fileStat);
     printf("Total Directory Size: %ldB\n", fileStat.st_size);
-  
+
     while(entry = readdir(dir)){
       if(entry -> d_type == DT_DIR){
 	printf("%s\t-dir\n", entry -> d_name);
