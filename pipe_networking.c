@@ -46,15 +46,16 @@ int server_handshake(int *to_client) {
     //get data from client
     printf("read %s from client: %s\n", PP, strerror(errno));
     //process data
-    char flipped[strlen(PP)];
+    char *flipped = malloc(strlen(PP) *sizeof(char));
     for(int i = 0; i <= strlen(PP); i ++){
       flipped[strlen(PP) -i -1] = PP[i];
     }
     //send processed data back to client
-    write(*to_client, flipped, sizeof(flipped));
+    write(*to_client, flipped, strlen(PP));
     printf("write %s from client: %s\n", flipped, strerror(errno));
+    free(flipped);
   }
-
+  
   return receive;
 }
 
