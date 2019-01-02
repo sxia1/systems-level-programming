@@ -1,6 +1,5 @@
 #include "pipe_networking.h"
 
-
 /*=========================
   server_handshake
   args: int * to_client
@@ -40,22 +39,6 @@ int server_handshake(int *to_client) {
   printf("10. read: %s\n", strerror(errno));
   printf("Handshake Complete\n");
 
-  //while client doesn't exit
-  int reading = 0;
-  while(reading = read(receive, PP, BUFFER_SIZE) > 0){
-    //get data from client
-    printf("read %s from client: %s\n", PP, strerror(errno));
-    //process data
-    char *flipped = malloc(strlen(PP) *sizeof(char));
-    for(int i = 0; i <= strlen(PP); i ++){
-      flipped[strlen(PP) -i -1] = PP[i];
-    }
-    //send processed data back to client
-    write(*to_client, flipped, strlen(PP));
-    printf("write %s from client: %s\n", flipped, strerror(errno));
-    free(flipped);
-  }
-  
   return receive;
 }
 
@@ -104,18 +87,5 @@ int client_handshake(int *to_server) {
   write(*to_server, ACK, sizeof(ACK));
   printf("9. write: %s\n", strerror(errno));
 
-  while(1){
-    //Prompt user for input
-    char input[BUFFER_SIZE];
-    printf("Send this to the server: ");
-    fgets(input, BUFFER_SIZE, stdin);
-    input[strlen(input) -1] = '\0';
-    //send input to server
-    write(*to_server, input, BUFFER_SIZE);
-    printf("write %s to server: %s\n", input, strerror(errno));
-    //get response from server and display to user
-    read(receive, mssg, BUFFER_SIZE);
-    printf("read response %s from server: %s\n", mssg, strerror(errno));
-  }
   return receive;
 }
