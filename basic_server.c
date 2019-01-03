@@ -19,24 +19,31 @@ int main() {
 
     from_client = server_handshake( &to_client );
 
-    //while client doesn't exit
-    char PP[BUFFER_SIZE];
-    int reading = 1;
-    while(reading = read(from_client, PP, BUFFER_SIZE) > 0){
-      //get data from client
-      printf("read %s from client: %s\n", PP, strerror(errno));
-      //process data
-      char *flipped = malloc(strlen(PP) *sizeof(char));
-      for(int i = 0; i < strlen(PP); i ++){
-	flipped[strlen(PP) -i -1] = PP[i];
+    pid_t subserver;
+    subserver = fork();
+
+    if(!subserver){
+      while(1){
+	//while client doesn't exit
+	char PP[BUFFER_SIZE];
+	int reading = 1;
+	while(reading = read(from_client, PP, BUFFER_SIZE) > 0){
+	  //get data from client
+	  printf("read %s from client: %s\n", PP, strerror(errno));
+	  //process data
+	  char *flipped = malloc(strlen(PP) *sizeof(char));
+	  for(int i = 0; i < strlen(PP); i ++){
+	    flipped[strlen(PP) -i -1] = PP[i];
+	  }
+	  flipped[strlen(PP)] = '\0';
+	  //send processed data back to client
+	  write(to_client, flipped, strlen(PP));
+	  printf("write %s from client: %s\n", flipped, strerror(errno));
+	  free(flipped);
+	  close(from_client);    
+	}
       }
-      flipped[strlen(PP)] = '\0';
-      //send processed data back to client
-      write(to_client, flipped, strlen(PP));
-      printf("write %s from client: %s\n", flipped, strerror(errno));
-      free(flipped);
     }
-    close(from_client);
-    //reset for a new handshake
+    from_client = server_handshake(&to_client);	  
   }  
 }
